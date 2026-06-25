@@ -17,6 +17,10 @@ class BookingService {
     return ApiService.post('/user/bookings/$bookingId/cancel', auth: true);
   }
 
+  static Future<Map<String, dynamic>> getSnapToken(int bookingId) {
+    return ApiService.post('/user/bookings/$bookingId/payment/snap-token', auth: true);
+  }
+
   static Future<Map<String, dynamic>> adminGetBookings() {
     return ApiService.get('/admin/bookings', auth: true);
   }

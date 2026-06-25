@@ -1,4 +1,5 @@
 import 'api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   static Future<Map<String, dynamic>> register({
@@ -25,7 +26,14 @@ class AuthService {
     });
   }
 
-  static Future<Map<String, dynamic>> logout() {
-    return ApiService.post('/user/auth/logout', auth: true);
+  static Future<Map<String, dynamic>> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    final role = prefs.getString('user_role') ?? 'user';
+    final endpoint = role == 'admin' ? '/admin/auth/logout' : '/user/auth/logout';
+    return ApiService.post(endpoint, auth: true);
+  }
+
+  static Future<Map<String, dynamic>> getProfile() {
+    return ApiService.get('/user/profile', auth: true);
   }
 }

@@ -37,7 +37,7 @@ class Truck {
       maxVolume: double.parse(json['max_volume'].toString()),
       pricePerKm: double.parse(json['price_per_km'].toString()),
       description: json['description'],
-      photoPath: json['photo_path'],
+      photoPath: json['photo_url'],
       status: json['status'] ?? '',
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
