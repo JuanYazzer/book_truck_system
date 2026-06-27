@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/Truck.dart';
 import '../../services/booking_service.dart';
 import '../main_layout.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateBookingScreen extends StatefulWidget {
   final Truck truck;
@@ -24,6 +25,20 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
   DateTime? _pickupDate;
   DateTime? _deliveryDate;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userName = prefs.getString('user_name') ?? '';
+    setState(() {
+      _nameController.text = userName;
+    });
+  }
 
   void _submit() async {
     if (_pickupDate == null || _deliveryDate == null) {

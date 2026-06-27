@@ -49,7 +49,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
       final snapToken = res['data']['snap_token'];
       final url = Uri.parse('https://app.sandbox.midtrans.com/snap/v2/vtweb/$snapToken');
       if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
+        await launchUrl(url, mode: LaunchMode.inAppWebView);
         _fetchBookings(); // Refresh after returning
       } else {
         if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tidak dapat membuka halaman pembayaran'), backgroundColor: Colors.red));
