@@ -233,7 +233,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
-              child: const Center(child: Text('🚚', style: TextStyle(fontSize: 64))),
+              child: truck.photoPath != null && truck.photoPath!.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                      child: Image.network(
+                        truck.photoPath!,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 180,
+                        errorBuilder: (_, __, ___) =>
+                            const Center(child: Text('🚚', style: TextStyle(fontSize: 64))),
+                        loadingBuilder: (_, child, progress) => progress == null
+                            ? child
+                            : const Center(child: CircularProgressIndicator()),
+                      ),
+                    )
+                  : const Center(child: Text('🚚', style: TextStyle(fontSize: 64))),
             ),
             Padding(
               padding: const EdgeInsets.all(24),

@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../models/Booking.dart';
 import '../../services/booking_service.dart';
 import '../trucks/trucks_screen.dart';
+import 'payment_webview_screen.dart';
 
 class BookingsScreen extends StatefulWidget {
   final VoidCallback? onNavigateToTrucks;
@@ -47,12 +48,28 @@ class _BookingsScreenState extends State<BookingsScreen> {
 
     if (res['success']) {
       final snapToken = res['data']['snap_token'];
-      final url = Uri.parse('https://app.sandbox.midtrans.com/snap/v2/vtweb/$snapToken');
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.inAppWebView);
-        _fetchBookings(); // Refresh after returning
-      } else {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tidak dapat membuka halaman pembayaran'), backgroundColor: Colors.red));
+      final url = 'https://app.sandbox.midtrans.com/snap/v2/vtweb/$snapToken';
+      
+      if (mounted) {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => Container(
+            height: MediaQuery.of(context).size.height * 0.9,
+            clipBehavior: Clip.antiAlias,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: PaymentWebViewScreen(
+              url: url,
+              onPaymentFinished: () {
+                _fetchBookings(); // Refresh data saat ditutup/selesai
+              },
+            ),
+          ),
+        );
       }
     } else {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res['message'] ?? 'Gagal mendapatkan token pembayaran'), backgroundColor: Colors.red));
@@ -189,7 +206,14 @@ class _BookingsScreenState extends State<BookingsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(booking.bookingNumber, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.lightBlue, fontSize: 18)),
+              Expanded(
+                child: Text(
+                  booking.bookingNumber, 
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.lightBlue, fontSize: 18),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
